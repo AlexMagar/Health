@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 import {cn} from '@/lib/utils'
+import { ThemeProvider } from "@/components/theme-provider";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets:['latin'],
@@ -22,8 +23,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head />
       {/* cn is short form for className, help to add dynamix/static class names */}
-      <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>{children}</body>
+      <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
