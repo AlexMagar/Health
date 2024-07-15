@@ -1,16 +1,18 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from "zod"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
+import { Form } from '@/components/ui/form'
 import CustomFormField from '../CustomFormField'
+import SubmitButton from '../SubmitButton'
+import { UserFormValidation } from '@/lib/validation'
+import { useRouter } from 'next/navigation'
 
 export enum FormFieldTypes{
   INPUT = 'input',
+  EMAIL = 'email',
   TEXTAREA = 'textarea',
   PHONE_INPUT = 'phoneInput',
   CHECKBOX = 'checkbox',
@@ -19,26 +21,31 @@ export enum FormFieldTypes{
   SKELETON = 'skeletion',
 }
 
-const formSchema = z.object({
-  username: z.string().min(2,{
-    message: 'Username must be at least 2 characters.'
-  }).max(50),
-})
-
 const PatientForm = () => {
+
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   //Define form 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof UserFormValidation>>({
+    resolver: zodResolver(UserFormValidation),
     defaultValues: {
-      username:"",
+      name:"",
+      email:"",
+      phone:""
     },
   })
 
   // Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>){
-    //do smth with the form values
-    //this will be type-safe and validation
-    console.log(values)
+  async function onSubmit({name, email, phone}: z.infer<typeof UserFormValidation>){
+    setIsLoading(true)
+    try {
+      // const userData = { name, email, phone }
+      // const user = await createUser(userData) 
+
+      // if(user) router.push(`/patients/${user.$id}/register`)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -49,6 +56,7 @@ const PatientForm = () => {
           <h1 className='header'>Hi There</h1>
           <p className='text-dark-200'>Schedule your first appointment.</p>
         </section>
+
         <CustomFormField 
           control={form.control}
           fieldType={FormFieldTypes.INPUT}
@@ -58,7 +66,26 @@ const PatientForm = () => {
           iconSrc = '/assets/icons/user.svg'
           iconAlt = 'user'
         />
-        <Button type='submit'>Submit</Button>
+
+        <CustomFormField 
+          control={form.control}
+          fieldType={FormFieldTypes.INPUT}
+          name='email'
+          label='Email'
+          placeholder='John@example.com'
+          iconSrc = '/assets/icons/email.svg'
+          iconAlt = 'email'
+        />
+
+        <CustomFormField 
+          control={form.control}
+          fieldType={FormFieldTypes.PHONE_INPUT}
+          name='phone'
+          label='Phone '
+          placeholder='0987654321'
+        />
+
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
   )
