@@ -3,5 +3,5 @@ import {z} from 'zod'
 export const UserFormValidation = z.object({
     name: z.string().min(2,'Name must be at least 2 character'),
     email: z.string().email('Invalid email address'),
-    phone: z.string().refine((phone) => /^\+d{10,15}$/.test(phone),'Invalid phone number')
+    phone: z.string().min(10,'Phone must contain at least 10 digit').refine((phone) => /^\+d{10,15}$/.test(phone),'Invalid phone number')
   })
